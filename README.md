@@ -4,7 +4,7 @@
 
 1. 由于要用到linux系统调用，请准备linux系统；
 2. 安装docker(`sudo curl -sSL https://get.daocloud.io/docker | sh`)和docker-compose(`sudo apt-get install docker-compose`);
-3. 使用`sudo docker pull yuukiiiqwq/fwoj_judger:v2`拉取镜像，更改startJudger.sh中的目录映射为自己本地的情况；
+3. 使用`sudo docker pull yuukiiiqwq/fwoj_judger:v2`拉取镜像，更改startJudger.sh中的目录映射为自己本地相应路径，并赋予脚本执行权限；
 4. 使用`sudo ./startup.sh`进行判题。
 
 目前没做接口，需要请自便。
