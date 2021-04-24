@@ -10,13 +10,14 @@
 #include <sys/reg.h>
 #include <unistd.h>
 #include <queue>
+using namespace std;
 
 const int ALLOW_SYS_CALL_C[] = {0,1,2,3,4,5,8,9,11,12,20,21,59,63,89,158,231,240, SYS_time, SYS_read, SYS_uname, SYS_write
         , SYS_open, SYS_close, SYS_execve, SYS_access, SYS_brk, SYS_munmap, SYS_mprotect, SYS_mmap, SYS_fstat
         , SYS_set_thread_area, 252, SYS_arch_prctl, 0 };
 
 bool allowSysCall[1024];
-std::string result = "AC";
+string result = "AC";
 
 
 int compile(const char* ceInfoFile){
@@ -26,7 +27,7 @@ int compile(const char* ceInfoFile){
             ,"Main.cpp","-o","Main",nullptr};
     pid_t pid = fork();
     if (pid == -1){
-        std::cout << "SE\n" ;
+        cout << "SE\n" ;
         return -1;
     } else if (pid != 0) {
         int status;
@@ -51,8 +52,8 @@ int compile(const char* ceInfoFile){
 int getMem(int pid, const char* field){
     char file[105];
     sprintf(file, "/proc/%d/status", pid);
-    std::ifstream fin(file);
-    std::string line;
+    ifstream fin(file);
+    string line;
     int fieldLen = 0,lineLen;
     fieldLen = strlen(field);
     int num = 0;
@@ -190,45 +191,57 @@ void updateStatus(pid_t pid, int& topMem
     }
 }
 
+string read(string file)
+{
+    FILE *fp;
+    int c;
+    string str;
+    fp = fopen(file.c_str(),"r");
+    while(1)
+    {
+        c = fgetc(fp);
+        if( feof(fp) )
+        {
+            break ;
+        }
+        str += c;
+    }
+    fclose(fp);
+    return str;
+}
 
 int main() {
+
     freopen("judger.log","w",stdout);
     int status = compile("ce.log");
-//    std::cout << "start!\n" ;
+//    cout << "start!\n" ;
     if (status == -1) {
-//        std::cout << "SE!\n" ;
+//        cout << "SE!\n" ;
     } else if (status != 0) {
-//        std::cout << "CE!\n" ;
+//        cout << "CE!\n" ;
     }
     else {
-//        std::cout << "compileSuccess!\n" ;
-        std::string inFile = "data.in";
-        std::string userOutFile = "user.out";
+//        cout << "compileSuccess!\n" ;
+        string inFile = "in.data";
+        string userOutFile = "out.data";
         int timeLimit = 1000, memLimit = 128;
 
-        std::queue<std::string> inQueue;
-        std::queue<std::string> outQueue;
+        string problemId =  read("problemId.data");
+        string info = "test_case/"+problemId+"/info.data";
+        string testcaseNum = read(info);
 
-        inQueue.push("2 5");
-        outQueue.push("7\n");
+        queue<string> inQueue;
+        queue<string> outQueue;
 
-        inQueue.push("1222 3");
-        outQueue.push("1225\n");
+        int n = stoi(testcaseNum);
 
-        inQueue.push("1222 3");
-        outQueue.push("122225\n");
-
-        inQueue.push("1222 3");
-        outQueue.push("1225\n");
-
-        inQueue.push("1222 3");
-        outQueue.push("1225\n");
-
-        inQueue.push("1222 3");
-        outQueue.push("122225\n");
-
-        inQueue.push("1222 3");
-        outQueue.push("122225\n");
+        for(int i = 1 ; i <= n ; i++)
+        {
+            string inStr = "test_case/"+problemId+"/"+to_string(i)+".in";
+            string outStr = "test_case/"+problemId+"/"+to_string(i)+".out";
+            inQueue.push(read(inStr));
+            outQueue.push(read(outStr));
+        }
 
         int maxTime = 0;
         int topMem = 0;
@@ -240,13 +253,13 @@ int main() {
             allowSysCall[ALLOW_SYS_CALL_C[i]] = true;
         }
         while (!inQueue.empty()) {
-            std::string inputData = inQueue.front();
+            string inputData = inQueue.front();
             inQueue.pop();
-            std::string outputData = outQueue.front();
+            string outputData = outQueue.front();
             outQueue.pop();
             result = "AC";
-//        std::cout << "|" << inputData << "|" << outputData << "|" << std::endl;
-            std::ofstream fout(inFile);
+//        cout << "|" << inputData << "|" << outputData << "|" << endl;
+            ofstream fout(inFile);
             fout << inputData;
             fout.close();
             int usedTime = 0;
@@ -262,19 +275,19 @@ int main() {
             }
             else
                 result = "SE";
-            std::ifstream fin(userOutFile);
-            std::string line;
-            std::string userOut = "";
+            ifstream fin(userOutFile);
+            string line;
+            string userOut = "";
             while (getline(fin,line)) {
                 userOut += line+"\n";
             }
             fin.close();
             if(outputData.compare(userOut)!=0)
                 result = "WA";
-//        std::cout << "userOut:" << userOutStr << "|standardOut:" << outputData << "\n";
-            std::cout << "result:" << result.c_str() <<",time:" << maxTime << ",mem:" << topMem << std::endl;
+//        cout << "userOut:" << userOutStr << "|standardOut:" << outputData << "\n";
+            cout << "result:" << result.c_str() <<",time:" << maxTime << ",mem:" << topMem << "teleport";
         }
     }
-//    std::cout << "end!\n";
+//    cout << "end!\n";
     return 0;
 }

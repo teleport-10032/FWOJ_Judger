@@ -1,16 +1,24 @@
-一个简易OnlineJudge判题机demo，在docker容器中跑用户程序，只支持C++。
+一个通过暴露http接口提供判题服务的判题机，以docker作为沙箱，传入源代码和题号，judger会在`judger/test_case`目录下查找测试样例，并返回判题结果或CE信息。
+
+接口调用示例:
+
+`http://10.211.55.6:8001/`
+
+body内容
+
+```
+1teleports
+#include "stdio.h"
+int main()
+{int a;int b;scanf("%d %d",&a,&b);printf("%d",1a);}1teleporte2teleports10002teleporte
+```
+
+>在该请求中传入了源程序和题号1000，奇怪的字符用来方便定位。
 
 准备工作：
 
-1. 由于要用到linux系统调用，请准备linux系统；
+1. 由于要用到linux系统调用，请准备linux系统，并使用chmod设定好权限；
 2. 安装docker(`sudo curl -sSL https://get.daocloud.io/docker | sh`)和docker-compose(`sudo apt-get install docker-compose`);
-3. 使用`sudo docker pull yuukiiiqwq/fwoj_judger:v2`拉取镜像，更改startJudger.sh中的目录映射为自己本地相应路径，并赋予脚本执行权限；
-4. 使用`sudo ./startup.sh`进行判题。
+3. 使用`sudo docker pull yuukiiiqwq/fwoj_judger:v2`拉取镜像，更改startJudger.sh中的目录映射为自己本地的情况；
+4. 使用`make && sudo ./judgerServer`启动判题服务。
 
-目前没做接口，需要请自便。
-
-1. 用户源代码:  main.cpp line 13
-2. 测试数据: judger/judger.cpp  212  (inQueue和outQueue分别存放输入输出测试数据)
-
-程序执行后将结果存储在judger/judger.log文件中。
-若编译成功则返回各组样例的结果，时间和内存；若失败则返回"CE",错误详情在judger/ce.log。
