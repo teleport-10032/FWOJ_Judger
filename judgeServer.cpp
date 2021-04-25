@@ -6,6 +6,8 @@
 #include <sys/wait.h>
 #include <string>
 #include <fstream>
+#include <stdio.h>
+
 using namespace std;
 string read(string file)
 {
@@ -43,7 +45,15 @@ void HttpProcess(string& req, string* resp)
 
   pid_t pid = fork();
   if(0==pid){
-      system("docker run --rm --cap-add=SYS_PTRACE  -v /home/teleport/FWOJ_Judger/judger:/judger yuukiiiqwq/fwoj_judger:v2 bash -c 'cd /judger && g++ judger.cpp -o judger -std=c++11 && ./judger'");
+      string source = "/home/teleport/Documents/FWOJ_BE/uploadFolder/test_case/" + problemId;
+      string target = "/home/teleport/Documents/FWOJ_BE/FWOJ_Judger/judger";
+      string shell = "cp -r " + source + " " + target;
+      string cleanShell = "rm -rf " + target + "/" + problemId;
+      char * shellStr = const_cast<char *>(shell.data());
+      char * cleanShellStr = const_cast<char *>(cleanShell.data());
+      system(shellStr);
+      system("docker run --rm --cap-add=SYS_PTRACE  -v /home/teleport/Documents/FWOJ_BE/FWOJ_Judger/judger:/judger yuukiiiqwq/fwoj_judger:v2 bash -c 'cd /judger && g++ judger.cpp -o judger -std=c++11 && ./judger'");
+      system(cleanShellStr);
       exit(0);
   }
   else if(-1!=pid){
@@ -61,6 +71,8 @@ void HttpProcess(string& req, string* resp)
       body = ceInfo;
   string header = "Content-Type: text/html\ncharset: gbk\nContent-Length:"
               +to_string(body.size())+"\n\n";
+
+
   // cout << "------------------------------------------------------" << endl;
   // cout << code << endl;
   // cout << "------------------------------------------------------" << endl;

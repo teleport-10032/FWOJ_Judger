@@ -227,7 +227,7 @@ int main() {
         int timeLimit = 1000, memLimit = 128;
 
         string problemId =  read("problemId.data");
-        string info = "test_case/"+problemId+"/info.data";
+        string info = problemId+"/info.data";
         string testcaseNum = read(info);
 
         queue<string> inQueue;
@@ -235,10 +235,11 @@ int main() {
 
         int n = stoi(testcaseNum);
 
+
         for(int i = 1 ; i <= n ; i++)
         {
-            string inStr = "test_case/"+problemId+"/"+to_string(i)+".in";
-            string outStr = "test_case/"+problemId+"/"+to_string(i)+".out";
+            string inStr = problemId+"/"+to_string(i)+".in";
+            string outStr = problemId+"/"+to_string(i)+".out";
             inQueue.push(read(inStr));
             outQueue.push(read(outStr));
         }
