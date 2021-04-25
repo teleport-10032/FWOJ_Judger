@@ -43,7 +43,7 @@ void HttpProcess(string& req, string* resp)
 
   pid_t pid = fork();
   if(0==pid){
-      system("docker run --rm --cap-add=SYS_PTRACE  -v /home/teleport/http/judger:/judger yuukiiiqwq/fwoj_judger:v2 bash -c 'cd /judger && g++ judger.cpp -o judger -std=c++11 && ./judger'");
+      system("docker run --rm --cap-add=SYS_PTRACE  -v /home/teleport/FWOJ_Judger/judger:/judger yuukiiiqwq/fwoj_judger:v2 bash -c 'cd /judger && g++ judger.cpp -o judger -std=c++11 && ./judger'");
       exit(0);
   }
   else if(-1!=pid){
@@ -54,7 +54,7 @@ void HttpProcess(string& req, string* resp)
 
   string first_line = "HTTP/1.0 200 OK\n";
   string body = "";
-  
+
   if(ceInfo.empty())
       body = read("judger/judger.log");
   else
@@ -71,7 +71,7 @@ void HttpProcess(string& req, string* resp)
 
 int main()
 {
-  TcpPthreadServer server("0.0.0.0",8001);
+  TcpPthreadServer server("0.0.0.0",8081);
   server.Start(HttpProcess);
   return 0;
 }

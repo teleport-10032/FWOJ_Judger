@@ -285,7 +285,7 @@ int main() {
             if(outputData.compare(userOut)!=0)
                 result = "WA";
 //        cout << "userOut:" << userOutStr << "|standardOut:" << outputData << "\n";
-            cout << "result:" << result.c_str() <<",time:" << maxTime << ",mem:" << topMem << "teleport";
+            cout << "result:" << result.c_str() <<",time:" << maxTime << ",mem:" << topMem << endl;
         }
     }
 //    cout << "end!\n";
